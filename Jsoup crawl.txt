@@ -1,0 +1,41 @@
+Single.fromCallable {
+                var imgsrc:String = ""
+                try {
+                    val url = "https://www.google.com/search?q=${str}&sca_esv=574494873&rlz=1C1YTUH_koKR1077KR1077&tbm=isch&source=lnms&sa=X&ved=2ahUKEwiQ7-CMkICCAxXS-2EKHVJTD7QQ_AUoAnoECAEQBA&biw=958&bih=945&dpr=1"
+                    Log.d("이미지 크롤링", url)
+                    var conn = Jsoup.connect(url)
+                    var doc = conn
+                        .header("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+        .header("Accept-Language",  "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+        .header("Cookie", "SEARCH_SAMESITE=CgQIqpkB; OTZ=7224045_20_20__20_; OGPC=19039026-1:19037049-1:; AEC=Ackid1TQMl1PjFg180-BdahS33U7erxXOqSaZp04cAfAqwWpK7yGsd1O0A==; NID=511=AHlFaJo5mUJ635GztZFf5oVxWcgQGwWWrYSmWiE4sPtqd52_mu72sAvQUqodQL71DPruZ-J3ugxM7S4mIaNhQQSxiekoe5qwMaj6Rw2Sse8UVKAxym7qBFhAh4rJW_PdGCdt3UCng46cr0BuI5G0fdfcnndU2R1seJmih_QpidRJEQyZMwIMHcIyZgsJALxfogXYrVTV0IXcYF2DgSaeO12iYW6Veq4RmCNgbG3esIA; 1P_JAR=2023-10-18-17; DV=AyxMNbyn8eEhgDfCHJrnfAyPR3c9tNgMi92YWugbEAMAAAA")
+        .referrer("https://www.google.com/")
+        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36")
+        .get()
+        var doc2 = conn.newRequest()
+            .get()
+        //"https://www.google.com/search?q=apple&sca_esv=574494873&rlz=1C1YTUH_koKR1077KR1077&tbm=isch&source=lnms&sa=X&ved=2ahUKEwiQ7-CMkICCAxXS-2EKHVJTD7QQ_AUoAnoECAEQBA&biw=958&bih=945&dpr=1"
+        var elements: Elements = doc2.select("img")
+        var imageUrls =  mutableListOf<String>()
+        for(element : Element in elements){
+            val imgUrl : String  = element.attr("data-src")
+            if(imgUrl.isNotEmpty()){
+                imageUrls.add(imgUrl)
+            }
+        }
+        Log.d("이미지 크롤링", imageUrls[0])
+        imgsrc = imageUrls[0]
+        Log.d("이미지 크롤링", imgsrc)
+    } catch (e: Exception) {
+        Log.d("이미지 크롤링", e.message.toString())
+    }
+    return@fromCallable imgsrc
+    }.subscribeOn(Schedulers.io())
+    .observeOn(AndroidSchedulers.mainThread())
+    .subscribe(
+    {text->
+        Glide.with(context).load(text).into(binding.exImgView)
+    },
+    {
+        it.printStackTrace()
+    }
+    )
