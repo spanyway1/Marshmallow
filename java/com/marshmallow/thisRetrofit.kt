@@ -14,7 +14,7 @@ object thisRetrofit {
         .writeTimeout(10, TimeUnit.MINUTES)
         .build()
 
-    val url = "http://54.224.109.110:8080"
+    val url = "http://127.0.0.1:8080"
     var gson = GsonBuilder().setLenient().create()
     val retrofit = Retrofit.Builder()
         .baseUrl(url)
